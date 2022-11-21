@@ -29,7 +29,7 @@ class GameTest extends TestCase
     public function testPlayFirstValidMove()
     {
         $game = Game::create();
-        $game->play(1, 0, 0);
+        $game->play(1, 1);
 
         $this->assertFalse($game->isCompleted());
         $this->assertNull($game->getWonBy());
@@ -43,8 +43,8 @@ class GameTest extends TestCase
     public function testPlaySecondValidMove()
     {
         $game = Game::create();
-        $game->play(1, 1, 1);
-        $game->play(2, 2, 0);
+        $game->play(1, 5);
+        $game->play(2, 3);
 
         $this->assertFalse($game->isCompleted());
         $this->assertNull($game->getWonBy());
@@ -61,7 +61,7 @@ class GameTest extends TestCase
 
         $this->expectException(InvalidPlayer::class);
 
-        $game->play(3, 0, 0);
+        $game->play(3, 1);
     }
 
     public function testPlayWithMoveOffBoardShouldThrowException()
@@ -71,40 +71,40 @@ class GameTest extends TestCase
         $this->expectException(InvalidMove::class);
         $this->expectExceptionMessage('Cannot play off the board');
 
-        $game->play(1, 4, 0);
+        $game->play(1, 10);
     }
 
     public function testPlayASecondMoveFromSamePlayerShouldThrowException()
     {
         $game = Game::create();
-        $game->play(1, 0, 0);
+        $game->play(1, 1);
 
         $this->expectException(InvalidMove::class);
         $this->expectExceptionMessage('Please wait for your turn to play');
 
-        $game->play(1, 0, 1);
+        $game->play(1, 1);
     }
 
     public function testPlayAgainSameMoveShouldThrowException()
     {
         $game = Game::create();
-        $game->play(1, 0, 0);
-        $game->play(2, 1, 1);
+        $game->play(1, 1);
+        $game->play(2, 5);
 
         $this->expectException(InvalidMove::class);
         $this->expectExceptionMessage('Invalid move: this is cheating :)');
 
-        $game->play(1, 0, 0);
+        $game->play(1, 1);
     }
 
     public function testPlayPlayerOneWinsHorizontally()
     {
         $game = Game::create();
-        $game->play(1, 0, 0);
-        $game->play(2, 1, 1);
-        $game->play(1, 1, 0);
-        $game->play(2, 2, 1);
-        $game->play(1, 2, 0);
+        $game->play(1, 1);
+        $game->play(2, 5);
+        $game->play(1, 2);
+        $game->play(2, 6);
+        $game->play(1, 3);
 
         $this->assertTrue($game->isCompleted());
         $this->assertSame(Player::One, $game->getWonBy());
@@ -113,11 +113,11 @@ class GameTest extends TestCase
     public function testPlayPlayerOneWinsVertically()
     {
         $game = Game::create();
-        $game->play(1, 0, 0);
-        $game->play(2, 1, 0);
-        $game->play(1, 0, 1);
-        $game->play(2, 2, 1);
-        $game->play(1, 0, 2);
+        $game->play(1, 1);
+        $game->play(2, 2);
+        $game->play(1, 4);
+        $game->play(2, 6);
+        $game->play(1, 7);
 
         $this->assertTrue($game->isCompleted());
         $this->assertSame(Player::One, $game->getWonBy());
@@ -126,11 +126,11 @@ class GameTest extends TestCase
     public function testPlayPlayerOneWinsDiagonally()
     {
         $game = Game::create();
-        $game->play(1, 0, 0);
-        $game->play(2, 1, 0);
-        $game->play(1, 1, 1);
-        $game->play(2, 2, 1);
-        $game->play(1, 2, 2);
+        $game->play(1, 1);
+        $game->play(2, 2);
+        $game->play(1, 5);
+        $game->play(2, 6);
+        $game->play(1, 9);
 
         $this->assertTrue($game->isCompleted());
         $this->assertSame(Player::One, $game->getWonBy());
@@ -139,15 +139,15 @@ class GameTest extends TestCase
     public function testPlayNoOneWins()
     {
         $game = Game::create();
-        $game->play(1, 0, 0);
-        $game->play(2, 1, 1);
-        $game->play(1, 1, 0);
-        $game->play(2, 2, 0);
-        $game->play(1, 0, 2);
-        $game->play(2, 0, 1);
-        $game->play(1, 2, 1);
-        $game->play(2, 1, 2);
-        $game->play(1, 2, 2);
+        $game->play(1, 1);
+        $game->play(2, 5);
+        $game->play(1, 2);
+        $game->play(2, 3);
+        $game->play(1, 7);
+        $game->play(2, 4);
+        $game->play(1, 6);
+        $game->play(2, 8);
+        $game->play(1, 9);
 
         $this->assertTrue($game->isCompleted());
         $this->assertNull($game->getWonBy());

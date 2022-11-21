@@ -30,19 +30,17 @@ class GameController extends AbstractController
     public function playAction(string $gameId, Request $request, GameHandler $gameHandler): JsonResponse
     {
         $player = $request->request->get('player');
-        $positionX = $request->request->get('x');
-        $positionY = $request->request->get('y');
+        $position = $request->request->get('position');
 
-        if (null === $player | null === $positionY | null === $positionX) {
-            throw new BadRequestHttpException("Required parameters: player, x, y");
+        if (null === $player | null === $position) {
+            throw new BadRequestHttpException("Required parameters: player, position");
         }
 
         try {
             $result = $gameHandler->play(
                 $gameId,
                 (int) $player,
-                (int) $positionX,
-                (int) $positionY
+                (int) $position
             );
         } catch (GameNotFound $exception) {
             throw new NotFoundHttpException($exception->getMessage());
