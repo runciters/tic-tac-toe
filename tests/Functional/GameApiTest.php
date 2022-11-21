@@ -26,7 +26,7 @@ class GameApiTest extends WebTestCase
         $newGameContent = $this->getJsonContent($client);
         $gameId = $newGameContent['gameId'];
 
-        $client->request('PATCH', "/game/$gameId", ['player' => 1, 'x' => 1, 'y' => 1]);
+        $client->request('PATCH', "/game/$gameId", ['player' => 1, 'position' => 5]);
         $content = $this->getJsonContent($client);
 
         $this->assertResponseIsSuccessful();
@@ -40,7 +40,7 @@ class GameApiTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('PATCH', "/game/1234", ['player' => 1, 'x' => 1, 'y' => 1]);
+        $client->request('PATCH', "/game/1234", ['player' => 1, 'position' => 5]);
         $content = $this->getJsonContent($client);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_NOT_FOUND);
@@ -58,7 +58,7 @@ class GameApiTest extends WebTestCase
         $content = $this->getJsonContent($client);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
-        $this->assertSame('Required parameters: player, x, y', $content['error']);
+        $this->assertSame('Required parameters: player, position', $content['error']);
     }
 
     public function testPlayGameWithInvalidMove(): void
@@ -68,11 +68,25 @@ class GameApiTest extends WebTestCase
         $newGameContent = $this->getJsonContent($client);
         $gameId = $newGameContent['gameId'];
 
-        $client->request('PATCH', "/game/$gameId", ['player' => 3, 'x' => 1, 'y' => 1]);
+        $client->request('PATCH', "/game/$gameId", ['player' => 3, 'position' => 1]);
         $content = $this->getJsonContent($client);
 
         $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
         $this->assertSame('We have player 1 and 2 only :(', $content['error']);
+    }
+
+    public function testPlayGameWithInvalidMovePosition(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/game');
+        $newGameContent = $this->getJsonContent($client);
+        $gameId = $newGameContent['gameId'];
+
+        $client->request('PATCH', "/game/$gameId", ['player' => 1, 'position' => 10]);
+        $content = $this->getJsonContent($client);
+
+        $this->assertResponseStatusCodeSame(Response::HTTP_BAD_REQUEST);
+        $this->assertSame('Cannot play off the board', $content['error']);
     }
 
     private function getJsonContent(KernelBrowser $client): mixed

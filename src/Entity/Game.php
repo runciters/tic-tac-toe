@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\Enum\Player;
+use App\Enum\Position;
 use App\Enum\PositionCoordinate;
 use App\Exception\GameOver;
 use App\Exception\InvalidMove;
@@ -78,7 +79,7 @@ class Game
         return $this->lastMoveBy;
     }
 
-    public function play(int $player, int $positionX, int $positionY): void
+    public function play(int $player, int $position): void
     {
         if ($this->isCompleted) {
             throw new GameOver();
@@ -95,18 +96,17 @@ class Game
         }
 
         try {
-            $x = PositionCoordinate::from($positionX);
-            $y = PositionCoordinate::from($positionY);
+            [$x, $y] = Position::from($position)->getCoordinates();
         } catch (\ValueError) {
             throw new InvalidMove('Cannot play off the board');
         }
 
         $currentState = $this->loadState();
-        if (null !== $currentState[$y->value][$x->value]) {
+        if (null !== $currentState[$y][$x]) {
             throw new InvalidMove("Invalid move: this is cheating :)");
         }
 
-        $currentState[$y->value][$x->value] = $player->value;
+        $currentState[$y][$x] = $player->value;
 
         $winner = $this->findAWinner($currentState);
 

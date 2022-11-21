@@ -23,10 +23,10 @@ class GameHandler
         return (string) $game->getId();
     }
 
-    public function play(string $gameId, int $player, int $moveX, int $moveY): GameResult
+    public function play(string $gameId, int $player, int $position): GameResult
     {
         $game = $this->repository->findOrFail($gameId);
-        $game->play($player, $moveX, $moveY);
+        $game->play($player, $position);
         $this->repository->save($game);
 
         return new GameResult($game);

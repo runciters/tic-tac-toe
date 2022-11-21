@@ -4,7 +4,7 @@ namespace App\Tests\Unit;
 
 use App\Entity\Game;
 use App\Enum\Player;
-use App\Enum\PositionCoordinate;
+use App\Enum\Position;
 use App\Exception\GameNotFound;
 use App\GameHandler;
 use App\Repository\InMemoryGameRepository;
@@ -23,8 +23,7 @@ class GameHandlerTest extends TestCase
         $result = $handler->play(
             (string) $game->getId(),
             Player::One->value,
-            PositionCoordinate::One->value,
-            PositionCoordinate::One->value
+            Position::Five->value
         );
 
         $this->assertSame([
@@ -50,8 +49,7 @@ class GameHandlerTest extends TestCase
         $handler->play(
             (string) $game->getId(),
             Player::One->value,
-            PositionCoordinate::One->value,
-            PositionCoordinate::One->value
+            Position::Five->value
         );
     }
 
