@@ -52,3 +52,5 @@ php bin/console --env test d:s:u --force
 # Run tests
 ./bin/phpunit
 ```
+
+inside the `example` directory there's a script to play a game with `curl`
